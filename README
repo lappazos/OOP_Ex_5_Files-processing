@@ -1,0 +1,102 @@
+alontron
+lioraryepaz
+
+
+=============================
+=      File description     =
+=============================
+README - this file
+filesprocessing
+    DirectoryProcessor.java - Main
+    EmptySourceDirectoryException.java
+    InvalidCommandFileException.java
+    InvalidNumberOfArgsException.java
+    InvalidSourceDirectoryException.java
+    InvalidUsageException.java
+    filesprocessing.commandfile
+        BadFormatException.java
+        BadSubsectionException.java
+        CommandFileException.java
+        CommandFileParser.java - parse the command file
+    filesprocessing.sectionhandler
+        InvalidSubSectionLineException.java
+        Section.java - wrap section data
+        filesprocessing.sectionhandler.filters
+            AllFilter.java - default filter
+            Filter.java
+            FilterDecorator.java
+            FilterFactory.java - factory
+            NotFilter.java - negative filter
+            filesprocessing.sectionhandler.filters.filenamefilters
+                ContainsFilter.java
+                FileFilter.java
+                PrefixFilter.java
+                SuffixFilter.java
+            filesprocessing.sectionhandler.filters.propertyfilters
+                ExecutableFilter.java
+                FilePropertyFilter.java
+                HiddenFilter.java
+                WritableFilter.java
+            filesprocessing.sectionhandler.filters.sizefilters
+                BetweenFilter.java
+                GreaterThanFilter.java
+        filesprocessing.sectionhandler.orders
+            AbsOrder.java - default order
+            Order.java
+            OrderDecorator.java
+            OrderFactory.java - factory
+            ReverseOrder.java - negative order
+            SizeOrder.java
+            TypeOrder.java
+
+
+=============================
+=          Design           =
+=============================
+the DirectoryProcessor is the main class. it parse the args data and create the CommandFileParser, which in his turn,
+creates Section class for each and every section.
+the section class is wrapping Order object & Filter object (which are cretead in a factory class).
+after all of the initializations, the main is printing the files out to to the console using 'perform'
+with each every section.
+The factory is being implemented using the singleton design pattern & is the single-choice of our program -
+in case an additional filter or order will be added, we will only need to change the factories (there are 2
+factories - Filters & Orders).
+in order to crete filter we have used filter interface, and abstract filterDecorator class (will be explained).
+in order to crete Order we have used abstract class, and abstract orderDecorator class inherited from it
+(will be explained).
+we have also used a decorator pattern in the implementation - every order & filter is a wrap of another
+(all have the default) - this way we were able to create a situation where we could use several basic filters & orders
+together to create a more complex one - even though it is not required in the exercise, we left an opening for
+following changes and developments. (etc. executable filter could wrap greater than filter and both will be used
+together).
+
+Regarding the exceptions - we chose to create some exceptions in our own, because we wanted indicative information
+regarding each nd every error type and kind - especially due to the fact the program has many places inwhich it could go
+wrong because of invalid user input.
+each type II error types received their own exception, because they need different addressing (message).
+type II are divided into 2 different packages - console errors, all inherit from InvalidUsageException,
+and commandFile errors, all inherit from CommandFileException.
+for all type I errors, we have used one unique exception - InvalidSubSectionLineException, which only indicates a
+invalid user input within the subsections - no need for further details.
+
+
+=============================
+=  Implementation details   =
+=============================
+
+first of all, as we mentioned - due to the single-choice pattern we have implemented, every future version that would
+like to add additional order or filter - would have to create the class, and change only the factory class.
+in addition, our code is extremely modular and flexible - every part is independent:
+DirectoryProcessor as main, a side class for commandline parser, section as a class that wrapps filter & order, and
+Exception class for every neede situation.
+
+we have sed the following java libraries - java.io.file, java.util, java.nio.file.
+
+in order to keep track on our files, we have used ArrayList Data Structure, which implement List interface.
+There were several reasons for that choice:
+1. ArrayList is anrdered structure - keep track on relations between its elements - a vital property when trying to
+sort files.
+2. the data we are dealing with isnt big enough to need optimal running times - only files in a very specific directory.
+3. ArrayList had convinient tools to help us filter & sort the data using the classes we have created.
+
+
